@@ -6,14 +6,14 @@ LIBREI_REQUIREMENTS_CENTOS="git curl python-pip ansible jq"
 TMP_DEST=/tmp/libre
 INSTALLER_BIN=/usr/local/bin/installer-libre
 ANSIBLE_DEST=/usr/local/lib/libre-ansible
-INSTALLER_URL=https://goo.gl/T8Dw9J
+INSTALLER_URL=https://raw.githubusercontent.com/NoSuchCommand/libre/testing/installer
 THIS_SCRIPT="$(realpath $0)"
 
 # config var
 LIBRE_USESUDO=yes
 LIBRE_TYPE=instructor
-LIBRE_TOOLREPO_URL=https://github.com/startxfr/libre
-LIBRE_TOOLREPO_BRANCH=master
+LIBRE_TOOLREPO_URL=https://github.com/NoSuchCommand/libre
+LIBRE_TOOLREPO_BRANCH=testing
 LIBRE_TOOLREPO_BASE=/
 UPDATE=n
 
