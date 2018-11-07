@@ -103,10 +103,8 @@ function prep_env {
         install -T -m 0755 -o root -g root "$THIS_SCRIPT" $INSTALLER_BIN
     fi
 
-    {
-        prep_dir $TMP_DEST     &&
-        prep_dir $ANSIBLE_DEST
-    }                          || exit 1
+    prep_dir $TMP_DEST     &&
+    prep_dir $ANSIBLE_DEST || exit 1
 
     return 0
 }
@@ -131,7 +129,7 @@ function install_deps {
 
 # installer install libre
 function fetch_installer {
-    cd $TMP_DEST
+    pushd $TMP_DEST &> /dev/null
     echo "Clone tools repository $LIBRE_TOOLREPO_URL"
     git clone $LIBRE_TOOLREPO_URL .
     if [ "$?" -eq 0 ]; then
@@ -140,7 +138,7 @@ function fetch_installer {
         echo "Copy libre playbook into $ANSIBLE_DEST"
         cp -r $TMP_DEST$LIBRE_TOOLREPO_BASE/ansible/* $ANSIBLE_DEST/
     fi
-    cd - &> /dev/null
+    popd &> /dev/null
 }
 
 # installer install libre
@@ -163,19 +161,25 @@ function install_libre {
     else
         LIBRE_TARGET="instructor"
     fi
+
     print_info
     perform_installation
-    cd $ANSIBLE_DEST
+
+    pushd $ANSIBLE_DEST &> /dev/null
+
     LIBRE_SUDO=""
-    if [[ "$(id -u)" != "0" && "$LIBRE_USESUDO" == "yes" ]]; then
-        LIBRE_SUDO=" -K "
+    if [ "$LIBRE_USESUDO" == "yes" ]; then
+        LIBRE_SUDO="-K"
     fi
+
     ansible-playbook -i inventory.yml ${LIBRE_SUDO} -e target=${LIBRE_TARGET} playbooks/${LIBRE_TYPE}/install.yml
-    echo -n " Do you want to continue by installing training session (y) : "
-    read doInstall
-    if [[ "$doInstall" == "" || "$doInstall" == "yes" || "$doInstall" == "y" ]]; then
+
+    read -p "Do you want to continue by installing training session (y/N) : " doInstall
+    if [[ "$doInstall" == "y" || "$doInstall" == "yes" ]]; then
         libre-session install
     fi
+
+    popd &> /dev/null
 }
 
 # do installation process
@@ -196,8 +200,9 @@ function uninstall_libre {
 # do uninstall process
 function perform_uninstallation {
     if [ -d $ANSIBLE_DEST ]; then
-        cd $ANSIBLE_DEST
+        pushd $ANSIBLE_DEST &> /dev/null
         ansible-playbook -i inventory.yml -e target=local playbooks/$1/uninstall.yml
+        popd &> /dev/null
     fi
 }
 
