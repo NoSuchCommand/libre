@@ -1,0 +1,22 @@
+---
+- name: "install_inventory : Create inventory directory {{ r_libre_dir_conf }}/inventory"
+  file:
+    state: directory
+    path: "{{ r_libre_dir_conf }}/inventory"
+    mode: 0775
+    owner: "{{ r_libre_user }}"
+    group: "{{ r_libre_group }}"
+    recurse: yes
+- name: "install_inventory : Get {{ r_libre_dir_conf }}/inventory/all.yml inventory file details"
+  stat:
+    path: "{{ r_libre_dir_conf }}/inventory/all.yml"
+  register: r_libre_inventory_details
+- name: "install_inventory : Generate inventory {{ r_libre_dir_conf }}/inventory/all.yml"
+  template:
+    src: ../templates/inventory.j2
+    dest: "{{ r_libre_dir_conf }}/inventory/all.yml"
+    remote_src: yes
+    mode: 0664
+    owner: "{{ r_libre_user }}"
+    group: "{{ r_libre_group }}"
+  when: r_libre_inventory_details.stat.exists != true

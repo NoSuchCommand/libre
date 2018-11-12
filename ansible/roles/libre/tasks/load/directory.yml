@@ -1,0 +1,19 @@
+---
+- name: "load_directory : Get {{ r_libre_dir }} directory details"
+  stat:
+    path: "{{ r_libre_dir }}"
+  register: r_libre_dir_details
+- name: "load_directory : Get {{ r_libre_dir_course }} directory details"
+  stat:
+    path: "{{ r_libre_dir_course }}"
+  register: r_libre_dir_course_details
+- name: "load_directory : Get {{ r_libre_dir_conf }} directory details"
+  stat:
+    path: "{{ r_libre_dir_conf }}"
+  register: r_libre_dir_conf_details
+- name: "load_directory : Get configuration directory {{ r_libre_userconfig_dir }}"
+  stat:
+    path: "{{ r_libre_userconfig_dir }}"
+  register: r_libre_userconfig_dir_details
+  become: no
+  
