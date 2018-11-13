@@ -106,3 +106,11 @@ repository_branch: testing
 #chapter_config_current: current-chapter.txt
 # Config file to store the current lab
 #lab_config_current: current-lab.txt
+r_libre_libre_userconf_default:
+  application:
+    source:
+      repo: https://github.com/NoSuchCommand/libre
+      branch: testing
+r_libre_repository_userconf_default:
+  url: https://github.com/NoSuchCommand/libre
+  branch: testing
