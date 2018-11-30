@@ -145,10 +145,20 @@
     value: "workstation0.{{ libre_session.course }}.{{ libre_infra.route53.domain }}"
 #    wait: yes
   register: route53_instructor
-- name: "aws : provision : Generate inventory file"
+- name: "aws : provision : Generate instructor inventory {{config_libre.directory.conf}}/inventory/instructor.yml"
   template:
-    src: templates/inventory.j2
-    dest: "{{ r_libre_dir_conf }}/inventory/infra.yml"
+    src: "templates/inventory-instructor.j2"
+    dest: "{{config_libre.directory.conf}}/inventory/instructor.yml"
+    mode: 0664
+    owner: "{{ r_libre_user }}"
+    group: "{{ r_libre_group }}"
+- name: "aws : provision : Generate students inventory {{config_libre.directory.conf}}/inventory/students.yml"
+  template:
+    src: "templates/inventory-students.j2"
+    dest: "{{config_libre.directory.conf}}/inventory/students.yml"
+    mode: 0664
+    owner: "{{ r_libre_user }}"
+    group: "{{ r_libre_group }}"
 - name: "aws : provision : Wait for the instances to boot by checking the ssh port"
   wait_for:
     host: "{{item.public_ip}}"
@@ -160,12 +170,12 @@
   with_items: "{{ ec2.tagged_instances }}"
 - name: "aws : provision : Get previous report data"
   set_fact:
-    previous_report: "{{ lookup('file', r_libre_tmp + '/' + r_infra_tmpfile) | default('') }}"
+    previous_report: "{{ lookup('file', r_libre_tmp + '/' + r_libre_tmpfile) | default('') }}"
   delegate_to: localhost
-- name: "aws : provision : Generate LIBRE report at {{ r_libre_tmp }}/{{ r_infra_tmpfile }}"
+- name: "aws : provision : Generate LIBRE report at {{ r_libre_tmp }}/{{ r_libre_tmpfile }}"
   template:
     src: templates/libre_report-provision.j2
-    dest: "{{ r_libre_tmp }}/{{ r_infra_tmpfile }}"
+    dest: "{{ r_libre_tmp }}/{{ r_libre_tmpfile }}"
     mode: 0664
   delegate_to: localhost
 - name: "aws : provision : Log provision action"

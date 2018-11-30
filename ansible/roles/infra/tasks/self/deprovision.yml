@@ -1,14 +1,18 @@
 ---
-- name: "prem : deprovision : Remove infrastructure inventory {{r_infra_dir_conf}}/inventory/infra.yml"
+- name: "self : deprovision : Remove infrastructure inventory {{config_libre.directory.conf}}/inventory/instructor.yml"
   file:
     state: "absent"
-    path: "{{r_infra_dir_conf}}/inventory/infra.yml"
+    path: "{{config_libre.directory.conf}}/inventory/instructor.yml"
+- name: "self : deprovision : Remove infrastructure inventory {{config_libre.directory.conf}}/inventory/students.yml"
+  file:
+    state: "absent"
+    path: "{{config_libre.directory.conf}}/inventory/students.yml"
 - name: "self : deprovision : Remove /etc/hosts file entries"
   blockinfile:
     dest: /etc/hosts
     content: ""
     state: absent
-- name: "self : deprovision : Remove instructor Authorize SSH key on {{ target }}"
+- name: "self : deprovision : Remove instructor Authorize SSH key"
   authorized_key:
     user: "{{ user1 }}"
     state: absent
@@ -19,12 +23,12 @@
     - "{{ r_infra_user_student }}"
   loop_control:
     loop_var: user1
-- name: "self : deprovision : Remove student Authorize SSH key on {{ target }}"
+- name: "self : deprovision : Remove student Authorize SSH key"
   authorized_key:
     user: "{{ r_infra_user_student }}"
     state: absent
     key: "{{ lookup('file', '../../ssh/'+r_infra_user_student+'-id_rsa.pub') }}"
-- name: "self : deprovision : Ensure instructor SSH private and public key are removed on {{ target }}"
+- name: "self : deprovision : Ensure instructor SSH private and public key are removed "
   file:
     state: absent
     path: "{{keyf.dir}}/.ssh/{{keyf.key}}"
@@ -43,7 +47,7 @@
       dir: "/root/"
   loop_control:
     loop_var: keyf
-- name: "self : deprovision : Ensure student SSH private and public key are removed on {{ target }}"
+- name: "self : deprovision : Ensure student SSH private and public key are removed on"
   file:
     state: absent
     path: "/home/{{ r_infra_user_student }}/.ssh/{{keyf}}"
@@ -57,12 +61,12 @@
     loop_var: keyf
 - name: "self : deprovision : Get previous report data"
   set_fact:
-    previous_report: "{{ lookup('file', r_libre_tmp + '/' + r_infra_tmpfile) | default('') }}"
+    previous_report: "{{ lookup('file', r_libre_tmp + '/' + r_libre_tmpfile) | default('') }}"
   delegate_to: localhost
-- name: "self : deprovision : Generate LIBRE report at {{ r_libre_tmp }}/{{ r_infra_tmpfile }}"
+- name: "self : deprovision : Generate LIBRE report at {{ r_libre_tmp }}/{{ r_libre_tmpfile }}"
   template:
     src: templates/libre_report-deprovision.j2
-    dest: "{{ r_libre_tmp }}/{{ r_infra_tmpfile }}"
+    dest: "{{ r_libre_tmp }}/{{ r_libre_tmpfile }}"
     mode: 0664
   delegate_to: localhost
 - name: "self : deprovision : Log deprovision action"
